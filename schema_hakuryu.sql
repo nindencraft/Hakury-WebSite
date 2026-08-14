@@ -76,6 +76,86 @@ CREATE POLICY "Usuarios autenticados podem atualizar membros"
 CREATE POLICY "Usuarios autenticados podem deletar membros"
   ON public.membros FOR DELETE TO authenticated USING (true);
 
+-- ============================================================
+-- Atributos de combate dos membros — Hakuryū Dashboard
+-- Escala: 1 Muito ruim | 2 Ruim | 3 Razoável | 4 Bom | 5 Muito bom
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.membro_atributos (
+  membro_id TEXT PRIMARY KEY REFERENCES public.membros(discord_id) ON DELETE CASCADE,
+  movimentacao SMALLINT NOT NULL DEFAULT 3 CHECK (movimentacao BETWEEN 1 AND 5),
+  parry SMALLINT NOT NULL DEFAULT 3 CHECK (parry BETWEEN 1 AND 5),
+  reacao SMALLINT NOT NULL DEFAULT 3 CHECK (reacao BETWEEN 1 AND 5),
+  ofensiva SMALLINT NOT NULL DEFAULT 3 CHECK (ofensiva BETWEEN 1 AND 5),
+  defensiva SMALLINT NOT NULL DEFAULT 3 CHECK (defensiva BETWEEN 1 AND 5),
+  nocao_jogo SMALLINT NOT NULL DEFAULT 3 CHECK (nocao_jogo BETWEEN 1 AND 5),
+  atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now(),
+  atualizado_por TEXT REFERENCES public.membros(discord_id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.historico_atributos_membro (
+  id BIGSERIAL PRIMARY KEY,
+  membro_id TEXT NOT NULL REFERENCES public.membros(discord_id) ON DELETE CASCADE,
+  movimentacao SMALLINT NOT NULL CHECK (movimentacao BETWEEN 1 AND 5),
+  parry SMALLINT NOT NULL CHECK (parry BETWEEN 1 AND 5),
+  reacao SMALLINT NOT NULL CHECK (reacao BETWEEN 1 AND 5),
+  ofensiva SMALLINT NOT NULL CHECK (ofensiva BETWEEN 1 AND 5),
+  defensiva SMALLINT NOT NULL CHECK (defensiva BETWEEN 1 AND 5),
+  nocao_jogo SMALLINT NOT NULL CHECK (nocao_jogo BETWEEN 1 AND 5),
+  avaliado_em TIMESTAMPTZ NOT NULL DEFAULT now(),
+  avaliado_por TEXT REFERENCES public.membros(discord_id) ON DELETE SET NULL
+);
+
+-- O dashboard usa o service_role no servidor para escritas.
+-- Usuários autenticados podem apenas consultar diretamente essas tabelas.
+GRANT SELECT ON public.membro_atributos TO authenticated;
+GRANT SELECT ON public.historico_atributos_membro TO authenticated;
+GRANT ALL ON public.membro_atributos TO service_role;
+GRANT ALL ON public.historico_atributos_membro TO service_role;
+GRANT USAGE, SELECT ON SEQUENCE public.historico_atributos_membro_id_seq TO service_role;
+
+ALTER TABLE public.membro_atributos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.historico_atributos_membro ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Usuarios autenticados podem visualizar atributos" ON public.membro_atributos;
+CREATE POLICY "Usuarios autenticados podem visualizar atributos"
+  ON public.membro_atributos FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Usuarios autenticados podem visualizar historico de atributos" ON public.historico_atributos_membro;
+CREATE POLICY "Usuarios autenticados podem visualizar historico de atributos"
+  ON public.historico_atributos_membro FOR SELECT TO authenticated USING (true);
+
+-- Garante uma ficha inicial para cada membro existente.
+INSERT INTO public.membro_atributos (membro_id)
+SELECT discord_id
+FROM public.membros
+ON CONFLICT (membro_id) DO NOTHING;
+
+-- Novos membros começam com avaliação neutra (Razoável = 3).
+CREATE OR REPLACE FUNCTION public.criar_atributos_iniciais_membro()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  INSERT INTO public.membro_atributos (membro_id)
+  VALUES (NEW.discord_id)
+  ON CONFLICT (membro_id) DO NOTHING;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_criar_atributos_iniciais_membro ON public.membros;
+CREATE TRIGGER trg_criar_atributos_iniciais_membro
+AFTER INSERT ON public.membros
+FOR EACH ROW
+EXECUTE FUNCTION public.criar_atributos_iniciais_membro();
+
+CREATE INDEX IF NOT EXISTS idx_historico_atributos_membro_id
+  ON public.historico_atributos_membro (membro_id, avaliado_em DESC);
+
+
 -- Tabela de treinos
 CREATE TABLE IF NOT EXISTS public.treinos (
   id_treino SERIAL PRIMARY KEY,
