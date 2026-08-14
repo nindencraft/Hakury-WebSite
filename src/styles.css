@@ -1,0 +1,239 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* O painel é sempre claro: evita o "modo escuro forçado" de navegadores mobile. */
+:root {
+  color-scheme: light;
+}
+
+/*
+ * Hakuryū (白竜) design system — dragão branco com detalhes dourados.
+ * Paleta: marfim, dourado, cinzas. Sem vermelho.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-gold-ink: var(--gold-ink);
+  --color-gold-soft: var(--gold-soft);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-display: "Cinzel", "Noto Serif JP", Georgia, serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-jp: "Noto Serif JP", Georgia, serif;
+}
+
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(0.991 0.008 100);
+  --foreground: oklch(0.28 0.006 90);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.28 0.006 90);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.28 0.006 90);
+
+  /* Dourado principal #d4af37 */
+  --primary: oklch(0.762 0.114 88);
+  --primary-foreground: oklch(0.99 0.006 100);
+
+  --secondary: oklch(0.962 0.014 88);
+  --secondary-foreground: oklch(0.45 0.075 80);
+
+  --muted: oklch(0.958 0.014 88);
+  --muted-foreground: oklch(0.52 0.032 82);
+
+  --accent: oklch(0.945 0.028 90);
+  --accent-foreground: oklch(0.45 0.075 80);
+
+  /* "Destrutivo" neutro — cinza-carvão, sem vermelho */
+  --destructive: oklch(0.42 0.012 85);
+  --destructive-foreground: oklch(0.99 0.006 100);
+
+  --border: oklch(0.905 0.03 90);
+  --input: oklch(0.905 0.03 90);
+  --ring: oklch(0.762 0.114 88);
+
+  --gold: oklch(0.762 0.114 88);
+  --gold-deep: oklch(0.667 0.126 78);
+  --gold-ink: oklch(0.512 0.101 78);
+  --gold-soft: oklch(0.955 0.03 92);
+
+  --chart-1: oklch(0.762 0.114 88);
+  --chart-2: oklch(0.667 0.126 78);
+  --chart-3: oklch(0.512 0.101 78);
+  --chart-4: oklch(0.72 0.02 85);
+  --chart-5: oklch(0.55 0.012 85);
+
+  --sidebar: oklch(0.985 0.012 95);
+  --sidebar-foreground: oklch(0.35 0.02 85);
+  --sidebar-primary: oklch(0.762 0.114 88);
+  --sidebar-primary-foreground: oklch(0.99 0.006 100);
+  --sidebar-accent: oklch(0.955 0.03 92);
+  --sidebar-accent-foreground: oklch(0.45 0.075 80);
+  --sidebar-border: oklch(0.9 0.035 90);
+  --sidebar-ring: oklch(0.762 0.114 88);
+
+  --gradient-page: linear-gradient(180deg, oklch(0.993 0.008 100) 0%, oklch(0.958 0.018 88) 100%);
+  --gradient-gold: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold),
+    transparent
+  );
+  --shadow-gold: 0 4px 16px -4px color-mix(in oklab, var(--gold) 45%, transparent);
+  --shadow-soft: 0 1px 2px color-mix(in oklab, var(--gold-ink) 8%, transparent),
+    0 8px 24px -12px color-mix(in oklab, var(--gold-ink) 22%, transparent);
+}
+
+.dark {
+  --background: oklch(0.19 0.006 90);
+  --foreground: oklch(0.955 0.012 95);
+  --card: oklch(0.235 0.008 90);
+  --card-foreground: oklch(0.955 0.012 95);
+  --popover: oklch(0.235 0.008 90);
+  --popover-foreground: oklch(0.955 0.012 95);
+  --primary: oklch(0.79 0.116 88);
+  --primary-foreground: oklch(0.2 0.01 88);
+  --secondary: oklch(0.29 0.012 88);
+  --secondary-foreground: oklch(0.93 0.02 92);
+  --muted: oklch(0.29 0.012 88);
+  --muted-foreground: oklch(0.72 0.022 88);
+  --accent: oklch(0.32 0.024 88);
+  --accent-foreground: oklch(0.93 0.02 92);
+  --destructive: oklch(0.72 0.014 88);
+  --destructive-foreground: oklch(0.2 0.01 88);
+  --border: oklch(0.38 0.03 88);
+  --input: oklch(0.38 0.03 88);
+  --ring: oklch(0.79 0.116 88);
+  --gold: oklch(0.79 0.116 88);
+  --gold-deep: oklch(0.72 0.11 82);
+  --gold-ink: oklch(0.86 0.07 90);
+  --gold-soft: oklch(0.3 0.03 88);
+  --sidebar: oklch(0.225 0.008 90);
+  --sidebar-foreground: oklch(0.93 0.014 92);
+  --sidebar-primary: oklch(0.79 0.116 88);
+  --sidebar-primary-foreground: oklch(0.2 0.01 88);
+  --sidebar-accent: oklch(0.31 0.024 88);
+  --sidebar-accent-foreground: oklch(0.93 0.02 92);
+  --sidebar-border: oklch(0.36 0.03 88);
+  --sidebar-ring: oklch(0.79 0.116 88);
+  --gradient-page: linear-gradient(180deg, oklch(0.2 0.008 90) 0%, oklch(0.165 0.006 90) 100%);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background: var(--gradient-page);
+    background-attachment: fixed;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Textura japonesa sutil no fundo, como no painel original */
+@utility washi {
+  position: relative;
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("https://www.transparenttextures.com/patterns/japanese-architectural.png");
+    opacity: 0.045;
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+/* Divisória dourada em gradiente */
+@utility rule-gold {
+  height: 2px;
+  border: none;
+  background: var(--gradient-gold);
+}
+
+@utility text-gold-gradient {
+  background: linear-gradient(
+    100deg,
+    var(--gold-ink),
+    var(--gold),
+    var(--gold-deep)
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+@utility ring-gold {
+  border: 2px solid var(--gold);
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--gold) 32%, transparent);
+}
+
+@utility card-gold {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  &:hover {
+    border-color: color-mix(in oklab, var(--gold) 55%, transparent);
+    box-shadow: var(--shadow-gold);
+  }
+}
